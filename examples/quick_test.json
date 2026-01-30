@@ -1,0 +1,30 @@
+{
+  "tti_steps": 500,
+  "env": {
+    "num_users": 30,
+    "num_rbs": 50,
+    "tti_duration": 0.001,
+    "scbr_bytes": 850,
+    "tcbr_ms": 60,
+    "pf_window_size": 100,
+    "channel_mean_low_db": 10,
+    "channel_mean_high_db": 20
+  },
+  "scenarios": [
+    {
+      "name": "Quick-PF",
+      "scheduler": {
+        "type": "PF"
+      }
+    },
+    {
+      "name": "Quick-Ehanced-PF",
+      "scheduler": {
+        "type": "Ehanced-PF",
+        "params": {
+          "tau_u": 0.1
+        }
+      }
+    }
+  ]
+}

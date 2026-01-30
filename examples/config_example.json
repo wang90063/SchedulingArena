@@ -1,0 +1,102 @@
+{
+  "tti_steps": 1000,
+  "env": {
+    "num_users": 60,
+    "num_rbs": 100,
+    "tti_duration": 0.001,
+    "scbr_bytes": 850,
+    "tcbr_ms": 60,
+    "pf_window_size": 100,
+    "channel_mean_low_db": 10,
+    "channel_mean_high_db": 20
+  },
+  "wireless_env": {
+    "type": "Realistic5G",
+    "params": {
+      "mean_snr_db": 15.0,
+      "std_snr_db": 3.0,
+      "carrier_frequency": 5e9,
+      "user_speed": 5.0,
+      "delay_spread": 100e-6
+    }
+  },
+  "scenarios": [
+    {
+      "name": "Baseline-PF",
+      "scheduler": {
+        "type": "PF"
+      }
+    },
+    {
+      "name": "Baseline-MLWDF",
+      "scheduler": {
+        "type": "M-LWDF",
+        "params": {
+          "delta_u": 0.05,
+          "tau_u": 0.1
+        }
+      }
+    },
+    {
+      "name": "Baseline-Ehanced-PF",
+      "scheduler": {
+        "type": "Ehanced-PF",
+        "params": {
+          "tau_u": 0.1
+        }
+      }
+    },
+    {
+      "name": "Heavy-Load-PF",
+      "scheduler": {
+        "type": "PF"
+      },
+      "env": {
+        "num_users": 120,
+        "tcbr_ms": 30
+      }
+    },
+    {
+      "name": "Proposed-PID-Constant",
+      "scheduler": {
+        "type": "B-M-LWDF"
+      },
+      "agent": {
+        "type": "PID-constant",
+        "params": {
+          "kp": 0.6,
+          "ki": 0.01,
+          "kd": 0.1
+        }
+      }
+    },
+    {
+      "name": "Proposed-PID-Scheduled",
+      "scheduler": {
+        "type": "B-M-LWDF"
+      },
+      "agent": {
+        "type": "PID-scheduled",
+        "params": {
+          "base_kp": 0.6,
+          "base_ki": 0.01,
+          "base_kd": 0.1
+        }
+      }
+    },
+    {
+      "name": "Realistic5G-SimpleRayleigh-Comparison",
+      "scheduler": {
+        "type": "PF"
+      },
+      "wireless_env": {
+        "type": "SimpleRayleigh",
+        "params": {
+          "channel_mean_low_db": 10,
+          "channel_mean_high_db": 20,
+          "fast_fading_std": 3.0
+        }
+      }
+    }
+  ]
+}
