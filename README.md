@@ -144,7 +144,7 @@ Available parameters:
 - `"M-LWDF"`: Modified Largest Weighted Delay First (requires `delta_u`, `tau_u` params)
 - `"B-M-LWDF"`: Beta-controlled M-LWDF (requires `delta_u`, `tau_u` params)
 - `"LDF"`: Largest Delay First
-
+- `"PDU set scheduling"`: ensure IP block transmission
 ### 6. Available Agents
 
 - `"PID-constant"`: PID controller with constant gains
