@@ -1,6 +1,45 @@
 # SchedulingArena
 
-A unified experimental platform for wireless scheduling algorithms. This package provides a clean interface to run scheduling experiments with configurable environment parameters and scheduling algorithms.
+
+
+### Architecture
+<!-- 插入架构图 -->
+![System Architecture](arch_pic.png)
+
+The platform adopts a layered architecture designed for **Separation of Concerns**, ensuring that algorithm design is decoupled from physical environment simulation while maintaining a high-fidelity closed-loop interaction.
+
+The system is organized into four logical layers:
+
+#### 1. Configuration Layer (Inputs)
+*   **Definition**: The entry point for defining "what to run."
+*   **Components**: JSON configuration files and the CLI entry point (`run.py`).
+*   **Function**: Users define global environment parameters (e.g., `num_users`, `num_rbs`) and experiment scenarios (e.g., comparing "Baseline-PF" vs. "Adaptive-MLWDF") without modifying code.
+
+#### 2. Orchestration Layer (Control)
+*   **Definition**: The "Experiment Runner" (`scheduling_arena.experiments`).
+*   **Function**: Manages the lifecycle of experiments. It parses configurations, instantiates environments, and executes batch experiments automatically.
+
+#### 3. Intrusive Simulation Link (Core Engine)
+*   **Definition**: The high-fidelity, closed-loop simulation core (`scheduling_arena.env`).
+*   **Mechanism**:
+    *   **Intrusive Design**: The scheduler is embedded directly into the simulation's critical path.
+    *   **The Loop**: In every Transmission Time Interval (TTI), the environment generates a state `Context`. The simulation **blocks** until the scheduler returns an `Allocation`.
+    *   **Update**: The environment applies the allocation, updates queues and channel states, and proceeds to the next TTI.
+
+#### 4. Strategy & Meta-Scheduling Layer (Algorithms)
+*   **Definition**: The decision-making logic (`scheduling_arena.scheduler`).
+*   **Core Schedulers**: Algorithms like **PF**, **M-LWDF**, and **LDF** that handle Resource Block (RB) allocation based on the provided context.
+*   **Meta-Schedulers (PID Agents)**: A higher-level adaptive layer. Instead of allocating RBs directly, **PID Agents** monitor performance error (e.g., delay violation) and dynamically tune the hyperparameters (e.g., the $\beta$ weight in M-LWDF) of the Core Scheduler in real-time.
+
+---
+
+### Key Features
+
+*   **Decoupled Architecture**: Algorithms interact with the environment solely through a standardized data `Context`, meaning researchers do not need to manage complex physical layer details.
+*   **Adaptive Meta-Scheduling**: Supports "Self-Driving" scheduling where PID agents automatically tune algorithm parameters during the simulation to adapt to traffic fluctuations.
+*   **Zero-Code Orchestration**: Complete experiment workflows—from scenario definition to execution—are driven entirely by declarative JSON configuration files.
+*   **Extensible Registry**: New algorithms can be added simply by inheriting from `BaseScheduler` and using the `@SchedulerRegistry` decorator.
+
 
 
 ## Installation
@@ -105,7 +144,7 @@ Available parameters:
 - `"M-LWDF"`: Modified Largest Weighted Delay First (requires `delta_u`, `tau_u` params)
 - `"B-M-LWDF"`: Beta-controlled M-LWDF (requires `delta_u`, `tau_u` params)
 - `"LDF"`: Largest Delay First
-
+- `"PDU set scheduling"`: ensure IP block transmission
 ### 6. Available Agents
 
 - `"PID-constant"`: PID controller with constant gains
